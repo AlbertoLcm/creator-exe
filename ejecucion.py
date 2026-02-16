@@ -4,9 +4,20 @@ import pandas as pd
 from datetime import datetime
 from playwright.async_api import async_playwright, Page, BrowserContext, expect
 import subprocess
+import json
 
-USUARIO = 'MI36791' 
-PASSWORD = 'ameli020'
+try:
+    with open('Utils/credentials.json', 'r', encoding='utf-8') as archivo_json:
+        credenciales = json.load(archivo_json)
+        USUARIO = credenciales['usuario']
+        PASSWORD = credenciales['password']
+except FileNotFoundError:
+    print("Error: No se encontró el archivo 'Utils/credentials.json'. Asegúrate de crearlo.")
+    exit()
+except KeyError as e:
+    print(f"Error: Falta la clave {e} en el archivo JSON.")
+    exit()
+
 DOCUMENTS_UPLOAD = 'Documentos'
 INPUT_FILE = 'Control Oficios Alta.xlsx'
 FILE_EXITOS = 'Resultados/Resultados_Exitosos.xlsx'
