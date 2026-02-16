@@ -275,9 +275,22 @@ async def main():
         print(f"Resultados exitosos guardados en {FILE_EXITOS}")
 
 def instalar_navegadores():
-    # Ejecuta el comando de instalación de playwright de forma silenciosa
-    subprocess.run(["playwright", "install", "chromium"], capture_output=True)
+    import sys
+    from playwright._impl._cli import main as playwright_cli
+    
+    print("Verificando/Instalando navegador Chromium... (esto puede tardar un par de minutos la primera vez)")
+    
+    original_argv = sys.argv.copy()
+    
+    sys.argv = ["", "install", "chromium"]
+    
+    try:
+        playwright_cli()
+    except SystemExit:
+        pass 
+    finally:
+        sys.argv = original_argv
 
 if __name__ == "__main__":
-    instalar_navegadores() # Asegura que el navegador exista en la PC del usuario
+    instalar_navegadores() 
     asyncio.run(main())
