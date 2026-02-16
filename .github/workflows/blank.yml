@@ -1,0 +1,38 @@
+name: Compilar Windows EXE
+
+# Esto hará que el flujo se ejecute al hacer push a "main"
+# y también te permitirá ejecutarlo manualmente desde GitHub.
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: 
+
+jobs:
+  build:
+    runs-on: windows-latest # ¡Aquí está la magia! Usamos Windows.
+
+    steps:
+    - name: Descargar el código
+      uses: actions/checkout@v4
+    
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # Ajusta a la versión de Python que uses
+
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Compilar con PyInstaller
+      # --onefile crea un solo .exe
+      # --windowed evita que se abra la consola negra de Windows (quítalo si tu app es de terminal)
+      run: |
+        pyinstaller --noconfirm --onefile ejecucion.py 
+
+    - name: Subir el EXE como Artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: ejecucion
+        path: dist/*.exe
